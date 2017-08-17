@@ -1,0 +1,56 @@
+{
+  "name": "fis3-deploy-i18n-ejs-example",
+  "version": "0.0.1",
+  "description": "The fis3-deploy-i18n-ejs (FIS3 deploy plugin) examples.",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tonyc726/fis3-deploy-i18n-ejs-example"
+  },
+  "keywords": [
+    "fis3",
+    "i18n",
+    "language",
+    "ejs"
+  ],
+  "author": "tony <zhujf620@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tonyc726/fis3-deploy-i18n-ejs-example/issues"
+  },
+  "homepage": "https://github.com/tonyc726/fis3-deploy-i18n-ejs-example",
+  "engines": {
+    "node": ">=6"
+  },
+  "scripts": {
+    "clean": "rimraf -g '{,!(node_modules)/**/}dist/'",
+    "lint": "eslint ./",
+    "build:default": "fis3 -f ./default/fis-conf.js release -lc --verbose && rimraf ./default/dist/.tmp",
+    "main": "npm-run-all clean lint build:*"
+  },
+  "dependencies": {
+    "fis3": "^3.4.34",
+    "glob": "^7.1.2",
+    "minimatch": "^3.0.4"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.25.0",
+    "babel-eslint": "^7.2.3",
+    "babel-jest": "^20.0.3",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-lodash": "^3.2.11",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-runtime": "^6.25.0",
+    "cross-env": "^5.0.5",
+    "eslint": "^4.4.1",
+    "eslint-config-airbnb-base": "^11.3.1",
+    "eslint-plugin-import": "^2.7.0",
+    "fis3-deploy-i18n-ejs": "^1.1.0",
+    "npm-run-all": "^4.0.2",
+    "rimraf": "^2.6.1",
+    "semantic-release": "^7.0.1"
+  }
+}
