@@ -17,11 +17,11 @@ const I18N_EJS_OPTIONS = {
   open: '<%',
   close: '%>',
   dist: '$lang/$file',
-  defaultLangName: 'zh',
-  templatePattern: '',
+  defaultLangName: '',
+  templatePattern: 'pages/**.tpl',
   i18nPattern: 'translations/*.json',
   ignorePattern: '',
-  noKeepSubPathPattern: '/pages/*.html',
+  noKeepSubPathPattern: '/pages/*.tpl',
   /**
    * @desc 多语言文件处理函数
    * @param {string} i18nFileJSONClone - 语言文件内容(JSON格式)的拷贝对象
@@ -40,7 +40,7 @@ fis.match('/translations/**', {
   release: false
 });
 
-fis.match('/pages/(**)/(*.html)', {
+fis.match('/pages/(**)/(*.tpl)', {
   release: '/$1/$2'
 });
 
