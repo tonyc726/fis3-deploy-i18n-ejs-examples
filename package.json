@@ -1,36 +1,37 @@
 {
-  "name": "fis3-deploy-i18n-ejs-example",
-  "version": "0.0.1",
+  "name": "fis3-examples",
+  "version": "0.0.0",
   "description": "The fis3-deploy-i18n-ejs (FIS3 deploy plugin) examples.",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/tonyc726/fis3-deploy-i18n-ejs-example"
+    "url": "https://github.com/tonyc726/fis3-examples"
   },
   "keywords": [
     "fis3",
-    "i18n",
-    "language",
-    "ejs"
+    "example",
+    "demo"
   ],
   "author": "tony <zhujf620@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tonyc726/fis3-deploy-i18n-ejs-example/issues"
+    "url": "https://github.com/tonyc726/fis3-examples/issues"
   },
-  "homepage": "https://github.com/tonyc726/fis3-deploy-i18n-ejs-example",
+  "homepage": "https://github.com/tonyc726/fis3-examples",
   "engines": {
     "node": ">=6"
   },
   "scripts": {
     "clean": "rimraf -g '{,!(node_modules)/**/}dist/'",
     "lint": "eslint ./",
-    "build:default": "fis3 -f ./default/fis-conf.js release -lc --verbose",
-    "build:templatePattern": "fis3 -f ./templatePattern/fis-conf.js release -lc --verbose",
+    "build:i18n-ejs-default": "fis3 -f ./i18n-ejs-default/fis-conf.js release -lc --verbose",
+    "build:i18n-ejs-use-templatePattern": "fis3 -f ./i18n-ejs-use-templatePattern/fis-conf.js release -lc --verbose",
+    "build:html-minifier-default": "fis3 -f ./html-minifier-default/fis-conf.js release -lc  --verbose",
     "main": "npm-run-all clean lint build:*"
   },
   "dependencies": {
     "fis3": "^3.4.34",
+    "fis3-deploy-html-minifier": "^1.0.3",
     "fis3-deploy-i18n-ejs": "^2.0.3",
     "glob": "^7.1.2",
     "minimatch": "^3.0.4"
@@ -50,7 +51,7 @@
     "eslint": "^4.5.0",
     "eslint-config-airbnb-base": "^11.3.2",
     "eslint-plugin-import": "^2.7.0",
-    "npm-run-all": "^4.1.0",
+    "npm-run-all": "^4.1.1",
     "rimraf": "^2.6.1",
     "semantic-release": "^7.0.2"
   }
