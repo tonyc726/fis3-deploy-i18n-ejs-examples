@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>async</title>  <!-- <script src="../node_modules/jquery/dist/jquery.js"></script> -->
+
+    
+</head>
+
+<body>
+  <h1>ASYNC<sub>异步模式</sub></h1>
+  <form action="#" id="validate_test">
+    <input type="text" value="" name="username" />
+    <input type="submit" value="submit" />
+  </form>
+<script src="/assets/scripts/vendors.js"></script>
+<script>/*resourcemap*/
+require.resourceMap({
+  "res": {
+    "node_modules/jquery-validation/dist/jquery.validate": {
+      "url": "/assets/scripts/jquery-validation/dist/jquery.validate.js",
+      "type": "js"
+    },
+    "node_modules/moment/moment": {
+      "url": "/assets/scripts/moment/moment.js",
+      "type": "js"
+    },
+    "pages/main": {
+      "url": "/assets/scripts/main.js",
+      "type": "js",
+      "deps": [
+        "node_modules/jquery-validation/dist/jquery.validate",
+        "node_modules/moment/moment"
+      ]
+    }
+  },
+  "pkg": {}
+});
+'use strict';
+
+require(['node_modules/jquery/dist/jquery','pages/main'], function ($, main) {
+  $(function () {
+    main.default(function (mainLocalText) {
+      console.log('main.js > export default > callback > ' + mainLocalText);
+    });
+  });
+});</script>
+</body>
+
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "mod-babel",
+  "version": "0.0.0",
+  "description": "The fis3-deploy-i18n-ejs (FIS3 deploy plugin) examples.",
+  "private": true,
+  "author": "tony <zhujf620@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tonyc726/fis3-examples/issues"
+  },
+  "homepage": "https://github.com/tonyc726/fis3-examples",
+  "engines": {
+    "node": ">=6"
+  },
+  "dependencies": {
+    "fis-mod.js": "^1.0.0",
+    "jquery": "^3.2.1",
+    "jquery-validation": "^1.17.0",
+    "moment": "^2.18.1"
+  },
+  "devDependencies": {
+    "process": "^0.11.10"
+  }
+}
