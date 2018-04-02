@@ -85,6 +85,7 @@ fis
     'fis-mod.js/mod.js,' +
     'jquery/dist/jquery.js,' +
     'jquery-validation/dist/**,' +
+    'lodash/**,' +
     // 'process/browser.js,' +
     // 'process/index.js,' +
     'moment/locale/**,' +

@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import 'jquery-validation';
 import moment from 'moment';
+import isArray from 'lodash/isArray';
 
 // @see https://jqueryvalidation.org/validate/
 $('#validate_test').validate({
@@ -34,4 +35,6 @@ export default (callback) => {
   if ($.isFunction(callback)) {
     callback(mainLocalVar);
   }
+
+  console.log(isArray([]));
 };

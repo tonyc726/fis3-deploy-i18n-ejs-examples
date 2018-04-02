@@ -16,6 +16,10 @@ define('pages/main', function(require, exports, module) {
   
   var _moment2 = _interopRequireDefault(_moment);
   
+  var _isArray = require('node_modules/lodash/isArray');
+  
+  var _isArray2 = _interopRequireDefault(_isArray);
+  
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   
   (0, _jquery2.default)('#validate_test').validate({
@@ -44,6 +48,8 @@ define('pages/main', function(require, exports, module) {
     if (_jquery2.default.isFunction(callback)) {
       callback(mainLocalVar);
     }
+  
+    console.log((0, _isArray2.default)([]));
   };
 
 });

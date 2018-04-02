@@ -5,8 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>async</title>  <!-- <script src="../node_modules/jquery/dist/jquery.js"></script> -->
-
+  <title>async</title>
     
 </head>
 
@@ -28,12 +27,17 @@ require.resourceMap({
       "url": "/assets/scripts/moment/moment.js",
       "type": "js"
     },
+    "node_modules/lodash/isArray": {
+      "url": "/assets/scripts/lodash/isArray.js",
+      "type": "js"
+    },
     "pages/main": {
       "url": "/assets/scripts/main.js",
       "type": "js",
       "deps": [
         "node_modules/jquery-validation/dist/jquery.validate",
-        "node_modules/moment/moment"
+        "node_modules/moment/moment",
+        "node_modules/lodash/isArray"
       ]
     }
   },
