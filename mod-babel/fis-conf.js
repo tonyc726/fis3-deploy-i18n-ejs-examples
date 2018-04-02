@@ -2,11 +2,21 @@ const Path = require('path');
 
 // 初始化 F.I.S 配置项
 fis.set('project.ignore', [
+  '.babelrc',
+  '.editorconfig',
+  '.eslintignore',
+  '.eslintrc',
+  '.gitattributes',
+  '.gitignore',
+  '.travis.yml',
+  '.yarnclean',
   '.git/**',
   '.svn/**',
   'fis-conf.*',
   'package.json',
   'yarn.lock',
+  'LICENSE',
+  'README.md',
   // project ignore files
   'dist/**',
 ]);
@@ -75,8 +85,8 @@ fis
     'fis-mod.js/mod.js,' +
     'jquery/dist/jquery.js,' +
     'jquery-validation/dist/**,' +
-    'process/browser.js,' +
-    'process/index.js,' +
+    // 'process/browser.js,' +
+    // 'process/index.js,' +
     'moment/locale/**,' +
     'moment/moment.js' +
   '})', {
@@ -95,7 +105,7 @@ fis
   })
   .match('/node_modules/{' +
     'fis-mod.js/mod.js,' +
-    'process/browser.js,' +
+    // 'process/browser.js,' +
     'jquery/dist/jquery.js' +
   '}', {
     packTo: '/assets/scripts/vendors.js'

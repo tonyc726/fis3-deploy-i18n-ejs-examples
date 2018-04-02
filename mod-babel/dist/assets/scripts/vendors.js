@@ -287,204 +287,11 @@ var define;
 
 })(this);
 
-;/*!node_modules/process/browser.js*/
-define('node_modules/process/browser', function(require, exports, module) {
-
-  // shim for using process in browser
-  var process = module.exports = {};
-  
-  // cached from whatever global is present so that test runners that stub it
-  // don't break things.  But we need to wrap it in a try catch in case it is
-  // wrapped in strict mode code which doesn't define any globals.  It's inside a
-  // function because try/catches deoptimize in certain engines.
-  
-  var cachedSetTimeout;
-  var cachedClearTimeout;
-  
-  function defaultSetTimout() {
-      throw new Error('setTimeout has not been defined');
-  }
-  function defaultClearTimeout () {
-      throw new Error('clearTimeout has not been defined');
-  }
-  (function () {
-      try {
-          if (typeof setTimeout === 'function') {
-              cachedSetTimeout = setTimeout;
-          } else {
-              cachedSetTimeout = defaultSetTimout;
-          }
-      } catch (e) {
-          cachedSetTimeout = defaultSetTimout;
-      }
-      try {
-          if (typeof clearTimeout === 'function') {
-              cachedClearTimeout = clearTimeout;
-          } else {
-              cachedClearTimeout = defaultClearTimeout;
-          }
-      } catch (e) {
-          cachedClearTimeout = defaultClearTimeout;
-      }
-  } ())
-  function runTimeout(fun) {
-      if (cachedSetTimeout === setTimeout) {
-          //normal enviroments in sane situations
-          return setTimeout(fun, 0);
-      }
-      // if setTimeout wasn't available but was latter defined
-      if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-          cachedSetTimeout = setTimeout;
-          return setTimeout(fun, 0);
-      }
-      try {
-          // when when somebody has screwed with setTimeout but no I.E. maddness
-          return cachedSetTimeout(fun, 0);
-      } catch(e){
-          try {
-              // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-              return cachedSetTimeout.call(null, fun, 0);
-          } catch(e){
-              // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-              return cachedSetTimeout.call(this, fun, 0);
-          }
-      }
-  
-  
-  }
-  function runClearTimeout(marker) {
-      if (cachedClearTimeout === clearTimeout) {
-          //normal enviroments in sane situations
-          return clearTimeout(marker);
-      }
-      // if clearTimeout wasn't available but was latter defined
-      if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-          cachedClearTimeout = clearTimeout;
-          return clearTimeout(marker);
-      }
-      try {
-          // when when somebody has screwed with setTimeout but no I.E. maddness
-          return cachedClearTimeout(marker);
-      } catch (e){
-          try {
-              // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-              return cachedClearTimeout.call(null, marker);
-          } catch (e){
-              // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-              // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-              return cachedClearTimeout.call(this, marker);
-          }
-      }
-  
-  
-  
-  }
-  var queue = [];
-  var draining = false;
-  var currentQueue;
-  var queueIndex = -1;
-  
-  function cleanUpNextTick() {
-      if (!draining || !currentQueue) {
-          return;
-      }
-      draining = false;
-      if (currentQueue.length) {
-          queue = currentQueue.concat(queue);
-      } else {
-          queueIndex = -1;
-      }
-      if (queue.length) {
-          drainQueue();
-      }
-  }
-  
-  function drainQueue() {
-      if (draining) {
-          return;
-      }
-      var timeout = runTimeout(cleanUpNextTick);
-      draining = true;
-  
-      var len = queue.length;
-      while(len) {
-          currentQueue = queue;
-          queue = [];
-          while (++queueIndex < len) {
-              if (currentQueue) {
-                  currentQueue[queueIndex].run();
-              }
-          }
-          queueIndex = -1;
-          len = queue.length;
-      }
-      currentQueue = null;
-      draining = false;
-      runClearTimeout(timeout);
-  }
-  
-  process.nextTick = function (fun) {
-      var args = new Array(arguments.length - 1);
-      if (arguments.length > 1) {
-          for (var i = 1; i < arguments.length; i++) {
-              args[i - 1] = arguments[i];
-          }
-      }
-      queue.push(new Item(fun, args));
-      if (queue.length === 1 && !draining) {
-          runTimeout(drainQueue);
-      }
-  };
-  
-  // v8 likes predictible objects
-  function Item(fun, array) {
-      this.fun = fun;
-      this.array = array;
-  }
-  Item.prototype.run = function () {
-      this.fun.apply(null, this.array);
-  };
-  process.title = 'browser';
-  process.browser = true;
-  process.env = {};
-  process.argv = [];
-  process.version = ''; // empty string to avoid regexp issues
-  process.versions = {};
-  
-  function noop() {}
-  
-  process.on = noop;
-  process.addListener = noop;
-  process.once = noop;
-  process.off = noop;
-  process.removeListener = noop;
-  process.removeAllListeners = noop;
-  process.emit = noop;
-  process.prependListener = noop;
-  process.prependOnceListener = noop;
-  
-  process.listeners = function (name) { return [] }
-  
-  process.binding = function (name) {
-      throw new Error('process.binding is not supported');
-  };
-  
-  process.cwd = function () { return '/' };
-  process.chdir = function (dir) {
-      throw new Error('process.chdir is not supported');
-  };
-  process.umask = function() { return 0; };
-  
-
-});
-
 ;/*!node_modules/jquery/dist/jquery.js*/
 define('node_modules/jquery/dist/jquery', function(require, exports, module) {
 
-  var process = require('node_modules/process/browser');
-  var global = typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};
   /*!
-   * jQuery JavaScript Library v3.2.1
+   * jQuery JavaScript Library v3.3.1
    * https://jquery.com/
    *
    * Includes Sizzle.js
@@ -494,7 +301,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
    * Released under the MIT license
    * https://jquery.org/license
    *
-   * Date: 2017-03-20T18:59Z
+   * Date: 2018-01-20T17:24Z
    */
   ( function( global, factory ) {
   
@@ -556,16 +363,57 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   var support = {};
   
+  var isFunction = function isFunction( obj ) {
+  
+        // Support: Chrome <=57, Firefox <=52
+        // In some browsers, typeof returns "function" for HTML <object> elements
+        // (i.e., `typeof document.createElement( "object" ) === "function"`).
+        // We don't want to classify *any* DOM node as a function.
+        return typeof obj === "function" && typeof obj.nodeType !== "number";
+    };
   
   
-  	function DOMEval( code, doc ) {
+  var isWindow = function isWindow( obj ) {
+  		return obj != null && obj === obj.window;
+  	};
+  
+  
+  
+  
+  	var preservedScriptAttributes = {
+  		type: true,
+  		src: true,
+  		noModule: true
+  	};
+  
+  	function DOMEval( code, doc, node ) {
   		doc = doc || document;
   
-  		var script = doc.createElement( "script" );
+  		var i,
+  			script = doc.createElement( "script" );
   
   		script.text = code;
+  		if ( node ) {
+  			for ( i in preservedScriptAttributes ) {
+  				if ( node[ i ] ) {
+  					script[ i ] = node[ i ];
+  				}
+  			}
+  		}
   		doc.head.appendChild( script ).parentNode.removeChild( script );
   	}
+  
+  
+  function toType( obj ) {
+  	if ( obj == null ) {
+  		return obj + "";
+  	}
+  
+  	// Support: Android <=2.3 only (functionish RegExp)
+  	return typeof obj === "object" || typeof obj === "function" ?
+  		class2type[ toString.call( obj ) ] || "object" :
+  		typeof obj;
+  }
   /* global Symbol */
   // Defining this global in .eslintrc.json would create a danger of using the global
   // unguarded in another place, it seems safer to define global only for this module
@@ -573,7 +421,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   
   var
-  	version = "3.2.1",
+  	version = "3.3.1",
   
   	// Define a local copy of jQuery
   	jQuery = function( selector, context ) {
@@ -585,16 +433,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   	// Support: Android <=4.0 only
   	// Make sure we trim BOM and NBSP
-  	rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,
-  
-  	// Matches dashed string for camelizing
-  	rmsPrefix = /^-ms-/,
-  	rdashAlpha = /-([a-z])/g,
-  
-  	// Used by jQuery.camelCase as callback to replace()
-  	fcamelCase = function( all, letter ) {
-  		return letter.toUpperCase();
-  	};
+  	rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
   
   jQuery.fn = jQuery.prototype = {
   
@@ -694,7 +533,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	}
   
   	// Handle case when target is a string or something (possible in deep copy)
-  	if ( typeof target !== "object" && !jQuery.isFunction( target ) ) {
+  	if ( typeof target !== "object" && !isFunction( target ) ) {
   		target = {};
   	}
   
@@ -760,28 +599,6 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   	noop: function() {},
   
-  	isFunction: function( obj ) {
-  		return jQuery.type( obj ) === "function";
-  	},
-  
-  	isWindow: function( obj ) {
-  		return obj != null && obj === obj.window;
-  	},
-  
-  	isNumeric: function( obj ) {
-  
-  		// As of jQuery 3.0, isNumeric is limited to
-  		// strings and numbers (primitives or objects)
-  		// that can be coerced to finite numbers (gh-2662)
-  		var type = jQuery.type( obj );
-  		return ( type === "number" || type === "string" ) &&
-  
-  			// parseFloat NaNs numeric-cast false positives ("")
-  			// ...but misinterprets leading-number strings, particularly hex literals ("0x...")
-  			// subtraction forces infinities to NaN
-  			!isNaN( obj - parseFloat( obj ) );
-  	},
-  
   	isPlainObject: function( obj ) {
   		var proto, Ctor;
   
@@ -815,27 +632,9 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		return true;
   	},
   
-  	type: function( obj ) {
-  		if ( obj == null ) {
-  			return obj + "";
-  		}
-  
-  		// Support: Android <=2.3 only (functionish RegExp)
-  		return typeof obj === "object" || typeof obj === "function" ?
-  			class2type[ toString.call( obj ) ] || "object" :
-  			typeof obj;
-  	},
-  
   	// Evaluates a script in a global context
   	globalEval: function( code ) {
   		DOMEval( code );
-  	},
-  
-  	// Convert dashed to camelCase; used by the css and data modules
-  	// Support: IE <=9 - 11, Edge 12 - 13
-  	// Microsoft forgot to hump their vendor prefix (#9572)
-  	camelCase: function( string ) {
-  		return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
   	},
   
   	each: function( obj, callback ) {
@@ -958,37 +757,6 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	// A global GUID counter for objects
   	guid: 1,
   
-  	// Bind a function to a context, optionally partially applying any
-  	// arguments.
-  	proxy: function( fn, context ) {
-  		var tmp, args, proxy;
-  
-  		if ( typeof context === "string" ) {
-  			tmp = fn[ context ];
-  			context = fn;
-  			fn = tmp;
-  		}
-  
-  		// Quick check to determine if target is callable, in the spec
-  		// this throws a TypeError, but we will just return undefined.
-  		if ( !jQuery.isFunction( fn ) ) {
-  			return undefined;
-  		}
-  
-  		// Simulated bind
-  		args = slice.call( arguments, 2 );
-  		proxy = function() {
-  			return fn.apply( context || this, args.concat( slice.call( arguments ) ) );
-  		};
-  
-  		// Set the guid of unique handler to the same of original handler, so it can be removed
-  		proxy.guid = fn.guid = fn.guid || jQuery.guid++;
-  
-  		return proxy;
-  	},
-  
-  	now: Date.now,
-  
   	// jQuery.support is not used in Core but other projects attach their
   	// properties to it so it needs to exist.
   	support: support
@@ -1011,9 +779,9 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	// hasOwn isn't used here due to false negatives
   	// regarding Nodelist length in IE
   	var length = !!obj && "length" in obj && obj.length,
-  		type = jQuery.type( obj );
+  		type = toType( obj );
   
-  	if ( type === "function" || jQuery.isWindow( obj ) ) {
+  	if ( isFunction( obj ) || isWindow( obj ) ) {
   		return false;
   	}
   
@@ -3333,11 +3101,9 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   
   
-  var risSimple = /^.[^:#\[\.,]*$/;
-  
   // Implement the identical functionality for filter and not
   function winnow( elements, qualifier, not ) {
-  	if ( jQuery.isFunction( qualifier ) ) {
+  	if ( isFunction( qualifier ) ) {
   		return jQuery.grep( elements, function( elem, i ) {
   			return !!qualifier.call( elem, i, elem ) !== not;
   		} );
@@ -3357,16 +3123,8 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		} );
   	}
   
-  	// Simple selector that can be filtered directly, removing non-Elements
-  	if ( risSimple.test( qualifier ) ) {
-  		return jQuery.filter( qualifier, elements, not );
-  	}
-  
-  	// Complex selector, compare the two sets, removing non-Elements
-  	qualifier = jQuery.filter( qualifier, elements );
-  	return jQuery.grep( elements, function( elem ) {
-  		return ( indexOf.call( qualifier, elem ) > -1 ) !== not && elem.nodeType === 1;
-  	} );
+  	// Filtered directly for both simple and complex selectors
+  	return jQuery.filter( qualifier, elements, not );
   }
   
   jQuery.filter = function( expr, elems, not ) {
@@ -3487,7 +3245,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   						for ( match in context ) {
   
   							// Properties of context are called as methods if possible
-  							if ( jQuery.isFunction( this[ match ] ) ) {
+  							if ( isFunction( this[ match ] ) ) {
   								this[ match ]( context[ match ] );
   
   							// ...and otherwise set as attributes
@@ -3530,7 +3288,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   		// HANDLE: $(function)
   		// Shortcut for document ready
-  		} else if ( jQuery.isFunction( selector ) ) {
+  		} else if ( isFunction( selector ) ) {
   			return root.ready !== undefined ?
   				root.ready( selector ) :
   
@@ -3845,11 +3603,11 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   					( function add( args ) {
   						jQuery.each( args, function( _, arg ) {
-  							if ( jQuery.isFunction( arg ) ) {
+  							if ( isFunction( arg ) ) {
   								if ( !options.unique || !self.has( arg ) ) {
   									list.push( arg );
   								}
-  							} else if ( arg && arg.length && jQuery.type( arg ) !== "string" ) {
+  							} else if ( arg && arg.length && toType( arg ) !== "string" ) {
   
   								// Inspect recursively
   								add( arg );
@@ -3964,11 +3722,11 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	try {
   
   		// Check for promise aspect first to privilege synchronous behavior
-  		if ( value && jQuery.isFunction( ( method = value.promise ) ) ) {
+  		if ( value && isFunction( ( method = value.promise ) ) ) {
   			method.call( value ).done( resolve ).fail( reject );
   
   		// Other thenables
-  		} else if ( value && jQuery.isFunction( ( method = value.then ) ) ) {
+  		} else if ( value && isFunction( ( method = value.then ) ) ) {
   			method.call( value, resolve, reject );
   
   		// Other non-thenables
@@ -4026,14 +3784,14 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   						jQuery.each( tuples, function( i, tuple ) {
   
   							// Map tuples (progress, done, fail) to arguments (done, fail, progress)
-  							var fn = jQuery.isFunction( fns[ tuple[ 4 ] ] ) && fns[ tuple[ 4 ] ];
+  							var fn = isFunction( fns[ tuple[ 4 ] ] ) && fns[ tuple[ 4 ] ];
   
   							// deferred.progress(function() { bind to newDefer or newDefer.notify })
   							// deferred.done(function() { bind to newDefer or newDefer.resolve })
   							// deferred.fail(function() { bind to newDefer or newDefer.reject })
   							deferred[ tuple[ 1 ] ]( function() {
   								var returned = fn && fn.apply( this, arguments );
-  								if ( returned && jQuery.isFunction( returned.promise ) ) {
+  								if ( returned && isFunction( returned.promise ) ) {
   									returned.promise()
   										.progress( newDefer.notify )
   										.done( newDefer.resolve )
@@ -4087,7 +3845,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   										returned.then;
   
   									// Handle a returned thenable
-  									if ( jQuery.isFunction( then ) ) {
+  									if ( isFunction( then ) ) {
   
   										// Special processors (notify) just wait for resolution
   										if ( special ) {
@@ -4183,7 +3941,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   							resolve(
   								0,
   								newDefer,
-  								jQuery.isFunction( onProgress ) ?
+  								isFunction( onProgress ) ?
   									onProgress :
   									Identity,
   								newDefer.notifyWith
@@ -4195,7 +3953,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   							resolve(
   								0,
   								newDefer,
-  								jQuery.isFunction( onFulfilled ) ?
+  								isFunction( onFulfilled ) ?
   									onFulfilled :
   									Identity
   							)
@@ -4206,7 +3964,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   							resolve(
   								0,
   								newDefer,
-  								jQuery.isFunction( onRejected ) ?
+  								isFunction( onRejected ) ?
   									onRejected :
   									Thrower
   							)
@@ -4246,8 +4004,15 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   					// fulfilled_callbacks.disable
   					tuples[ 3 - i ][ 2 ].disable,
   
+  					// rejected_handlers.disable
+  					// fulfilled_handlers.disable
+  					tuples[ 3 - i ][ 3 ].disable,
+  
   					// progress_callbacks.lock
-  					tuples[ 0 ][ 2 ].lock
+  					tuples[ 0 ][ 2 ].lock,
+  
+  					// progress_handlers.lock
+  					tuples[ 0 ][ 3 ].lock
   				);
   			}
   
@@ -4317,7 +4082,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   			// Use .then() to unwrap secondary thenables (cf. gh-3000)
   			if ( master.state() === "pending" ||
-  				jQuery.isFunction( resolveValues[ i ] && resolveValues[ i ].then ) ) {
+  				isFunction( resolveValues[ i ] && resolveValues[ i ].then ) ) {
   
   				return master.then();
   			}
@@ -4445,7 +4210,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		bulk = key == null;
   
   	// Sets many values
-  	if ( jQuery.type( key ) === "object" ) {
+  	if ( toType( key ) === "object" ) {
   		chainable = true;
   		for ( i in key ) {
   			access( elems, fn, i, key[ i ], true, emptyGet, raw );
@@ -4455,7 +4220,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	} else if ( value !== undefined ) {
   		chainable = true;
   
-  		if ( !jQuery.isFunction( value ) ) {
+  		if ( !isFunction( value ) ) {
   			raw = true;
   		}
   
@@ -4497,6 +4262,23 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   	return len ? fn( elems[ 0 ], key ) : emptyGet;
   };
+  
+  
+  // Matches dashed string for camelizing
+  var rmsPrefix = /^-ms-/,
+  	rdashAlpha = /-([a-z])/g;
+  
+  // Used by camelCase as callback to replace()
+  function fcamelCase( all, letter ) {
+  	return letter.toUpperCase();
+  }
+  
+  // Convert dashed to camelCase; used by the css and data modules
+  // Support: IE <=9 - 11, Edge 12 - 15
+  // Microsoft forgot to hump their vendor prefix (#9572)
+  function camelCase( string ) {
+  	return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
+  }
   var acceptData = function( owner ) {
   
   	// Accepts only:
@@ -4559,14 +4341,14 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		// Handle: [ owner, key, value ] args
   		// Always use camelCase key (gh-2257)
   		if ( typeof data === "string" ) {
-  			cache[ jQuery.camelCase( data ) ] = value;
+  			cache[ camelCase( data ) ] = value;
   
   		// Handle: [ owner, { properties } ] args
   		} else {
   
   			// Copy the properties one-by-one to the cache object
   			for ( prop in data ) {
-  				cache[ jQuery.camelCase( prop ) ] = data[ prop ];
+  				cache[ camelCase( prop ) ] = data[ prop ];
   			}
   		}
   		return cache;
@@ -4576,7 +4358,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   			this.cache( owner ) :
   
   			// Always use camelCase key (gh-2257)
-  			owner[ this.expando ] && owner[ this.expando ][ jQuery.camelCase( key ) ];
+  			owner[ this.expando ] && owner[ this.expando ][ camelCase( key ) ];
   	},
   	access: function( owner, key, value ) {
   
@@ -4624,9 +4406,9 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   				// If key is an array of keys...
   				// We always set camelCase keys, so remove that.
-  				key = key.map( jQuery.camelCase );
+  				key = key.map( camelCase );
   			} else {
-  				key = jQuery.camelCase( key );
+  				key = camelCase( key );
   
   				// If a key with the spaces exists, use it.
   				// Otherwise, create an array by matching non-whitespace
@@ -4772,7 +4554,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   						if ( attrs[ i ] ) {
   							name = attrs[ i ].name;
   							if ( name.indexOf( "data-" ) === 0 ) {
-  								name = jQuery.camelCase( name.slice( 5 ) );
+  								name = camelCase( name.slice( 5 ) );
   								dataAttr( elem, name, data[ name ] );
   							}
   						}
@@ -5019,8 +4801,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   
   function adjustCSS( elem, prop, valueParts, tween ) {
-  	var adjusted,
-  		scale = 1,
+  	var adjusted, scale,
   		maxIterations = 20,
   		currentValue = tween ?
   			function() {
@@ -5038,30 +4819,33 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   	if ( initialInUnit && initialInUnit[ 3 ] !== unit ) {
   
+  		// Support: Firefox <=54
+  		// Halve the iteration target value to prevent interference from CSS upper bounds (gh-2144)
+  		initial = initial / 2;
+  
   		// Trust units reported by jQuery.css
   		unit = unit || initialInUnit[ 3 ];
-  
-  		// Make sure we update the tween properties later on
-  		valueParts = valueParts || [];
   
   		// Iteratively approximate from a nonzero starting point
   		initialInUnit = +initial || 1;
   
-  		do {
+  		while ( maxIterations-- ) {
   
-  			// If previous iteration zeroed out, double until we get *something*.
-  			// Use string for doubling so we don't accidentally see scale as unchanged below
-  			scale = scale || ".5";
-  
-  			// Adjust and apply
-  			initialInUnit = initialInUnit / scale;
+  			// Evaluate and update our best guess (doubling guesses that zero out).
+  			// Finish if the scale equals or crosses 1 (making the old*new product non-positive).
   			jQuery.style( elem, prop, initialInUnit + unit );
+  			if ( ( 1 - scale ) * ( 1 - ( scale = currentValue() / initial || 0.5 ) ) <= 0 ) {
+  				maxIterations = 0;
+  			}
+  			initialInUnit = initialInUnit / scale;
   
-  		// Update scale, tolerating zero or NaN from tween.cur()
-  		// Break the loop if scale is unchanged or perfect, or if we've just had enough.
-  		} while (
-  			scale !== ( scale = currentValue() / initial ) && scale !== 1 && --maxIterations
-  		);
+  		}
+  
+  		initialInUnit = initialInUnit * 2;
+  		jQuery.style( elem, prop, initialInUnit + unit );
+  
+  		// Make sure we update the tween properties later on
+  		valueParts = valueParts || [];
   	}
   
   	if ( valueParts ) {
@@ -5179,7 +4963,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   var rtagName = ( /<([a-z][^\/\0>\x20\t\r\n\f]+)/i );
   
-  var rscriptType = ( /^$|\/(?:java|ecma)script/i );
+  var rscriptType = ( /^$|^module$|\/(?:java|ecma)script/i );
   
   
   
@@ -5261,7 +5045,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		if ( elem || elem === 0 ) {
   
   			// Add nodes directly
-  			if ( jQuery.type( elem ) === "object" ) {
+  			if ( toType( elem ) === "object" ) {
   
   				// Support: Android <=4.0 only, PhantomJS 1 only
   				// push.apply(_, arraylike) throws on ancient WebKit
@@ -5771,7 +5555,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   			enumerable: true,
   			configurable: true,
   
-  			get: jQuery.isFunction( hook ) ?
+  			get: isFunction( hook ) ?
   				function() {
   					if ( this.originalEvent ) {
   							return hook( this.originalEvent );
@@ -5906,7 +5690,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	}
   
   	// Create a timestamp if incoming event doesn't have one
-  	this.timeStamp = src && src.timeStamp || jQuery.now();
+  	this.timeStamp = src && src.timeStamp || Date.now();
   
   	// Mark it as fixed
   	this[ jQuery.expando ] = true;
@@ -6105,14 +5889,13 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   	/* eslint-enable */
   
-  	// Support: IE <=10 - 11, Edge 12 - 13
+  	// Support: IE <=10 - 11, Edge 12 - 13 only
   	// In IE/Edge using regex groups here causes severe slowdowns.
   	// See https://connect.microsoft.com/IE/feedback/details/1736512/
   	rnoInnerhtml = /<script|<style|<link/i,
   
   	// checked="checked" or checked
   	rchecked = /checked\s*(?:[^=]|=\s*.checked.)/i,
-  	rscriptTypeMasked = /^true\/(.*)/,
   	rcleanScript = /^\s*<!(?:\[CDATA\[|--)|(?:\]\]|--)>\s*$/g;
   
   // Prefer a tbody over its parent table for containing new rows
@@ -6120,7 +5903,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	if ( nodeName( elem, "table" ) &&
   		nodeName( content.nodeType !== 11 ? content : content.firstChild, "tr" ) ) {
   
-  		return jQuery( ">tbody", elem )[ 0 ] || elem;
+  		return jQuery( elem ).children( "tbody" )[ 0 ] || elem;
   	}
   
   	return elem;
@@ -6132,10 +5915,8 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	return elem;
   }
   function restoreScript( elem ) {
-  	var match = rscriptTypeMasked.exec( elem.type );
-  
-  	if ( match ) {
-  		elem.type = match[ 1 ];
+  	if ( ( elem.type || "" ).slice( 0, 5 ) === "true/" ) {
+  		elem.type = elem.type.slice( 5 );
   	} else {
   		elem.removeAttribute( "type" );
   	}
@@ -6201,15 +5982,15 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		l = collection.length,
   		iNoClone = l - 1,
   		value = args[ 0 ],
-  		isFunction = jQuery.isFunction( value );
+  		valueIsFunction = isFunction( value );
   
   	// We can't cloneNode fragments that contain checked, in WebKit
-  	if ( isFunction ||
+  	if ( valueIsFunction ||
   			( l > 1 && typeof value === "string" &&
   				!support.checkClone && rchecked.test( value ) ) ) {
   		return collection.each( function( index ) {
   			var self = collection.eq( index );
-  			if ( isFunction ) {
+  			if ( valueIsFunction ) {
   				args[ 0 ] = value.call( this, index, self.html() );
   			}
   			domManip( self, args, callback, ignored );
@@ -6263,14 +6044,14 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   						!dataPriv.access( node, "globalEval" ) &&
   						jQuery.contains( doc, node ) ) {
   
-  						if ( node.src ) {
+  						if ( node.src && ( node.type || "" ).toLowerCase()  !== "module" ) {
   
   							// Optional AJAX dependency, but won't run scripts if not present
   							if ( jQuery._evalUrl ) {
   								jQuery._evalUrl( node.src );
   							}
   						} else {
-  							DOMEval( node.textContent.replace( rcleanScript, "" ), doc );
+  							DOMEval( node.textContent.replace( rcleanScript, "" ), doc, node );
   						}
   					}
   				}
@@ -6550,8 +6331,6 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		return this.pushStack( ret );
   	};
   } );
-  var rmargin = ( /^margin/ );
-  
   var rnumnonpx = new RegExp( "^(" + pnum + ")(?!px)[a-z%]+$", "i" );
   
   var getStyles = function( elem ) {
@@ -6568,6 +6347,8 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		return view.getComputedStyle( elem );
   	};
   
+  var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
+  
   
   
   ( function() {
@@ -6581,25 +6362,33 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   			return;
   		}
   
+  		container.style.cssText = "position:absolute;left:-11111px;width:60px;" +
+  			"margin-top:1px;padding:0;border:0";
   		div.style.cssText =
-  			"box-sizing:border-box;" +
-  			"position:relative;display:block;" +
+  			"position:relative;display:block;box-sizing:border-box;overflow:scroll;" +
   			"margin:auto;border:1px;padding:1px;" +
-  			"top:1%;width:50%";
-  		div.innerHTML = "";
-  		documentElement.appendChild( container );
+  			"width:60%;top:1%";
+  		documentElement.appendChild( container ).appendChild( div );
   
   		var divStyle = window.getComputedStyle( div );
   		pixelPositionVal = divStyle.top !== "1%";
   
   		// Support: Android 4.0 - 4.3 only, Firefox <=3 - 44
-  		reliableMarginLeftVal = divStyle.marginLeft === "2px";
-  		boxSizingReliableVal = divStyle.width === "4px";
+  		reliableMarginLeftVal = roundPixelMeasures( divStyle.marginLeft ) === 12;
   
-  		// Support: Android 4.0 - 4.3 only
+  		// Support: Android 4.0 - 4.3 only, Safari <=9.1 - 10.1, iOS <=7.0 - 9.3
   		// Some styles come back with percentage values, even though they shouldn't
-  		div.style.marginRight = "50%";
-  		pixelMarginRightVal = divStyle.marginRight === "4px";
+  		div.style.right = "60%";
+  		pixelBoxStylesVal = roundPixelMeasures( divStyle.right ) === 36;
+  
+  		// Support: IE 9 - 11 only
+  		// Detect misreporting of content dimensions for box-sizing:border-box elements
+  		boxSizingReliableVal = roundPixelMeasures( divStyle.width ) === 36;
+  
+  		// Support: IE 9 only
+  		// Detect overflow:scroll screwiness (gh-3699)
+  		div.style.position = "absolute";
+  		scrollboxSizeVal = div.offsetWidth === 36 || "absolute";
   
   		documentElement.removeChild( container );
   
@@ -6608,7 +6397,12 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		div = null;
   	}
   
-  	var pixelPositionVal, boxSizingReliableVal, pixelMarginRightVal, reliableMarginLeftVal,
+  	function roundPixelMeasures( measure ) {
+  		return Math.round( parseFloat( measure ) );
+  	}
+  
+  	var pixelPositionVal, boxSizingReliableVal, scrollboxSizeVal, pixelBoxStylesVal,
+  		reliableMarginLeftVal,
   		container = document.createElement( "div" ),
   		div = document.createElement( "div" );
   
@@ -6623,26 +6417,26 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	div.cloneNode( true ).style.backgroundClip = "";
   	support.clearCloneStyle = div.style.backgroundClip === "content-box";
   
-  	container.style.cssText = "border:0;width:8px;height:0;top:0;left:-9999px;" +
-  		"padding:0;margin-top:1px;position:absolute";
-  	container.appendChild( div );
-  
   	jQuery.extend( support, {
-  		pixelPosition: function() {
-  			computeStyleTests();
-  			return pixelPositionVal;
-  		},
   		boxSizingReliable: function() {
   			computeStyleTests();
   			return boxSizingReliableVal;
   		},
-  		pixelMarginRight: function() {
+  		pixelBoxStyles: function() {
   			computeStyleTests();
-  			return pixelMarginRightVal;
+  			return pixelBoxStylesVal;
+  		},
+  		pixelPosition: function() {
+  			computeStyleTests();
+  			return pixelPositionVal;
   		},
   		reliableMarginLeft: function() {
   			computeStyleTests();
   			return reliableMarginLeftVal;
+  		},
+  		scrollboxSize: function() {
+  			computeStyleTests();
+  			return scrollboxSizeVal;
   		}
   	} );
   } )();
@@ -6674,7 +6468,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		// but width seems to be reliably pixels.
   		// This is against the CSSOM draft spec:
   		// https://drafts.csswg.org/cssom/#resolved-values
-  		if ( !support.pixelMarginRight() && rnumnonpx.test( ret ) && rmargin.test( name ) ) {
+  		if ( !support.pixelBoxStyles() && rnumnonpx.test( ret ) && rboxStyle.test( name ) ) {
   
   			// Remember the original values
   			width = style.width;
@@ -6779,87 +6573,120 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		value;
   }
   
-  function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
-  	var i,
-  		val = 0;
+  function boxModelAdjustment( elem, dimension, box, isBorderBox, styles, computedVal ) {
+  	var i = dimension === "width" ? 1 : 0,
+  		extra = 0,
+  		delta = 0;
   
-  	// If we already have the right measurement, avoid augmentation
-  	if ( extra === ( isBorderBox ? "border" : "content" ) ) {
-  		i = 4;
-  
-  	// Otherwise initialize for horizontal or vertical properties
-  	} else {
-  		i = name === "width" ? 1 : 0;
+  	// Adjustment may not be necessary
+  	if ( box === ( isBorderBox ? "border" : "content" ) ) {
+  		return 0;
   	}
   
   	for ( ; i < 4; i += 2 ) {
   
-  		// Both box models exclude margin, so add it if we want it
-  		if ( extra === "margin" ) {
-  			val += jQuery.css( elem, extra + cssExpand[ i ], true, styles );
+  		// Both box models exclude margin
+  		if ( box === "margin" ) {
+  			delta += jQuery.css( elem, box + cssExpand[ i ], true, styles );
   		}
   
-  		if ( isBorderBox ) {
+  		// If we get here with a content-box, we're seeking "padding" or "border" or "margin"
+  		if ( !isBorderBox ) {
   
-  			// border-box includes padding, so remove it if we want content
-  			if ( extra === "content" ) {
-  				val -= jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
+  			// Add padding
+  			delta += jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
+  
+  			// For "border" or "margin", add border
+  			if ( box !== "padding" ) {
+  				delta += jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
+  
+  			// But still keep track of it otherwise
+  			} else {
+  				extra += jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
   			}
   
-  			// At this point, extra isn't border nor margin, so remove border
-  			if ( extra !== "margin" ) {
-  				val -= jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
-  			}
+  		// If we get here with a border-box (content + padding + border), we're seeking "content" or
+  		// "padding" or "margin"
   		} else {
   
-  			// At this point, extra isn't content, so add padding
-  			val += jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
+  			// For "content", subtract padding
+  			if ( box === "content" ) {
+  				delta -= jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
+  			}
   
-  			// At this point, extra isn't content nor padding, so add border
-  			if ( extra !== "padding" ) {
-  				val += jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
+  			// For "content" or "padding", subtract border
+  			if ( box !== "margin" ) {
+  				delta -= jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
   			}
   		}
   	}
   
-  	return val;
+  	// Account for positive content-box scroll gutter when requested by providing computedVal
+  	if ( !isBorderBox && computedVal >= 0 ) {
+  
+  		// offsetWidth/offsetHeight is a rounded sum of content, padding, scroll gutter, and border
+  		// Assuming integer scroll gutter, subtract the rest and round down
+  		delta += Math.max( 0, Math.ceil(
+  			elem[ "offset" + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ) ] -
+  			computedVal -
+  			delta -
+  			extra -
+  			0.5
+  		) );
+  	}
+  
+  	return delta;
   }
   
-  function getWidthOrHeight( elem, name, extra ) {
+  function getWidthOrHeight( elem, dimension, extra ) {
   
   	// Start with computed style
-  	var valueIsBorderBox,
-  		styles = getStyles( elem ),
-  		val = curCSS( elem, name, styles ),
-  		isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box";
+  	var styles = getStyles( elem ),
+  		val = curCSS( elem, dimension, styles ),
+  		isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
+  		valueIsBorderBox = isBorderBox;
   
-  	// Computed unit is not pixels. Stop here and return.
+  	// Support: Firefox <=54
+  	// Return a confounding non-pixel value or feign ignorance, as appropriate.
   	if ( rnumnonpx.test( val ) ) {
-  		return val;
+  		if ( !extra ) {
+  			return val;
+  		}
+  		val = "auto";
   	}
   
   	// Check for style in case a browser which returns unreliable values
   	// for getComputedStyle silently falls back to the reliable elem.style
-  	valueIsBorderBox = isBorderBox &&
-  		( support.boxSizingReliable() || val === elem.style[ name ] );
+  	valueIsBorderBox = valueIsBorderBox &&
+  		( support.boxSizingReliable() || val === elem.style[ dimension ] );
   
-  	// Fall back to offsetWidth/Height when value is "auto"
+  	// Fall back to offsetWidth/offsetHeight when value is "auto"
   	// This happens for inline elements with no explicit setting (gh-3571)
-  	if ( val === "auto" ) {
-  		val = elem[ "offset" + name[ 0 ].toUpperCase() + name.slice( 1 ) ];
+  	// Support: Android <=4.1 - 4.3 only
+  	// Also use offsetWidth/offsetHeight for misreported inline dimensions (gh-3602)
+  	if ( val === "auto" ||
+  		!parseFloat( val ) && jQuery.css( elem, "display", false, styles ) === "inline" ) {
+  
+  		val = elem[ "offset" + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ) ];
+  
+  		// offsetWidth/offsetHeight provide border-box values
+  		valueIsBorderBox = true;
   	}
   
-  	// Normalize "", auto, and prepare for extra
+  	// Normalize "" and auto
   	val = parseFloat( val ) || 0;
   
-  	// Use the active box-sizing model to add/subtract irrelevant styles
+  	// Adjust for the element's box model
   	return ( val +
-  		augmentWidthOrHeight(
+  		boxModelAdjustment(
   			elem,
-  			name,
+  			dimension,
   			extra || ( isBorderBox ? "border" : "content" ),
   			valueIsBorderBox,
-  			styles
+  			styles,
+  
+  			// Provide the current computed size to request scroll gutter calculation (gh-3589)
+  			val
   		)
   	) + "px";
   }
@@ -6900,9 +6727,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   	// Add in properties whose names you wish to fix before
   	// setting or getting the value
-  	cssProps: {
-  		"float": "cssFloat"
-  	},
+  	cssProps: {},
   
   	// Get and set the style property on a DOM Node
   	style: function( elem, name, value, extra ) {
@@ -6914,7 +6739,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   		// Make sure that we're working with the right name
   		var ret, type, hooks,
-  			origName = jQuery.camelCase( name ),
+  			origName = camelCase( name ),
   			isCustomProp = rcustomProp.test( name ),
   			style = elem.style;
   
@@ -6982,7 +6807,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   	css: function( elem, name, extra, styles ) {
   		var val, num, hooks,
-  			origName = jQuery.camelCase( name ),
+  			origName = camelCase( name ),
   			isCustomProp = rcustomProp.test( name );
   
   		// Make sure that we're working with the right name. We don't
@@ -7020,8 +6845,8 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	}
   } );
   
-  jQuery.each( [ "height", "width" ], function( i, name ) {
-  	jQuery.cssHooks[ name ] = {
+  jQuery.each( [ "height", "width" ], function( i, dimension ) {
+  	jQuery.cssHooks[ dimension ] = {
   		get: function( elem, computed, extra ) {
   			if ( computed ) {
   
@@ -7037,29 +6862,41 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   					// in IE throws an error.
   					( !elem.getClientRects().length || !elem.getBoundingClientRect().width ) ?
   						swap( elem, cssShow, function() {
-  							return getWidthOrHeight( elem, name, extra );
+  							return getWidthOrHeight( elem, dimension, extra );
   						} ) :
-  						getWidthOrHeight( elem, name, extra );
+  						getWidthOrHeight( elem, dimension, extra );
   			}
   		},
   
   		set: function( elem, value, extra ) {
   			var matches,
-  				styles = extra && getStyles( elem ),
-  				subtract = extra && augmentWidthOrHeight(
+  				styles = getStyles( elem ),
+  				isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
+  				subtract = extra && boxModelAdjustment(
   					elem,
-  					name,
+  					dimension,
   					extra,
-  					jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
+  					isBorderBox,
   					styles
   				);
+  
+  			// Account for unreliable border-box dimensions by comparing offset* to computed and
+  			// faking a content-box to get border and padding (gh-3699)
+  			if ( isBorderBox && support.scrollboxSize() === styles.position ) {
+  				subtract -= Math.ceil(
+  					elem[ "offset" + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ) ] -
+  					parseFloat( styles[ dimension ] ) -
+  					boxModelAdjustment( elem, dimension, "border", false, styles ) -
+  					0.5
+  				);
+  			}
   
   			// Convert to pixels if value adjustment is needed
   			if ( subtract && ( matches = rcssNum.exec( value ) ) &&
   				( matches[ 3 ] || "px" ) !== "px" ) {
   
-  				elem.style[ name ] = value;
-  				value = jQuery.css( elem, name );
+  				elem.style[ dimension ] = value;
+  				value = jQuery.css( elem, dimension );
   			}
   
   			return setPositiveNumber( elem, value, subtract );
@@ -7103,7 +6940,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		}
   	};
   
-  	if ( !rmargin.test( prefix ) ) {
+  	if ( prefix !== "margin" ) {
   		jQuery.cssHooks[ prefix + suffix ].set = setPositiveNumber;
   	}
   } );
@@ -7274,7 +7111,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	window.setTimeout( function() {
   		fxNow = undefined;
   	} );
-  	return ( fxNow = jQuery.now() );
+  	return ( fxNow = Date.now() );
   }
   
   // Generate parameters to create a standard animation
@@ -7378,9 +7215,10 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	// Restrict "overflow" and "display" styles during box animations
   	if ( isBox && elem.nodeType === 1 ) {
   
-  		// Support: IE <=9 - 11, Edge 12 - 13
+  		// Support: IE <=9 - 11, Edge 12 - 15
   		// Record all 3 overflow attributes because IE does not infer the shorthand
-  		// from identically-valued overflowX and overflowY
+  		// from identically-valued overflowX and overflowY and Edge just mirrors
+  		// the overflowX value there.
   		opts.overflow = [ style.overflow, style.overflowX, style.overflowY ];
   
   		// Identify a display type, preferring old show/hide data over the CSS cascade
@@ -7488,7 +7326,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   	// camelCase, specialEasing and expand cssHook pass
   	for ( index in props ) {
-  		name = jQuery.camelCase( index );
+  		name = camelCase( index );
   		easing = specialEasing[ name ];
   		value = props[ index ];
   		if ( Array.isArray( value ) ) {
@@ -7613,9 +7451,9 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	for ( ; index < length; index++ ) {
   		result = Animation.prefilters[ index ].call( animation, elem, props, animation.opts );
   		if ( result ) {
-  			if ( jQuery.isFunction( result.stop ) ) {
+  			if ( isFunction( result.stop ) ) {
   				jQuery._queueHooks( animation.elem, animation.opts.queue ).stop =
-  					jQuery.proxy( result.stop, result );
+  					result.stop.bind( result );
   			}
   			return result;
   		}
@@ -7623,7 +7461,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   	jQuery.map( props, createTween, animation );
   
-  	if ( jQuery.isFunction( animation.opts.start ) ) {
+  	if ( isFunction( animation.opts.start ) ) {
   		animation.opts.start.call( elem, animation );
   	}
   
@@ -7656,7 +7494,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	},
   
   	tweener: function( props, callback ) {
-  		if ( jQuery.isFunction( props ) ) {
+  		if ( isFunction( props ) ) {
   			callback = props;
   			props = [ "*" ];
   		} else {
@@ -7688,9 +7526,9 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   jQuery.speed = function( speed, easing, fn ) {
   	var opt = speed && typeof speed === "object" ? jQuery.extend( {}, speed ) : {
   		complete: fn || !fn && easing ||
-  			jQuery.isFunction( speed ) && speed,
+  			isFunction( speed ) && speed,
   		duration: speed,
-  		easing: fn && easing || easing && !jQuery.isFunction( easing ) && easing
+  		easing: fn && easing || easing && !isFunction( easing ) && easing
   	};
   
   	// Go to the end state if fx are off
@@ -7717,7 +7555,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	opt.old = opt.complete;
   
   	opt.complete = function() {
-  		if ( jQuery.isFunction( opt.old ) ) {
+  		if ( isFunction( opt.old ) ) {
   			opt.old.call( this );
   		}
   
@@ -7881,7 +7719,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		i = 0,
   		timers = jQuery.timers;
   
-  	fxNow = jQuery.now();
+  	fxNow = Date.now();
   
   	for ( ; i < timers.length; i++ ) {
   		timer = timers[ i ];
@@ -8234,7 +8072,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   
   	// Strip and collapse whitespace according to HTML spec
-  	// https://html.spec.whatwg.org/multipage/infrastructure.html#strip-and-collapse-whitespace
+  	// https://infra.spec.whatwg.org/#strip-and-collapse-ascii-whitespace
   	function stripAndCollapse( value ) {
   		var tokens = value.match( rnothtmlwhite ) || [];
   		return tokens.join( " " );
@@ -8245,20 +8083,30 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	return elem.getAttribute && elem.getAttribute( "class" ) || "";
   }
   
+  function classesToArray( value ) {
+  	if ( Array.isArray( value ) ) {
+  		return value;
+  	}
+  	if ( typeof value === "string" ) {
+  		return value.match( rnothtmlwhite ) || [];
+  	}
+  	return [];
+  }
+  
   jQuery.fn.extend( {
   	addClass: function( value ) {
   		var classes, elem, cur, curValue, clazz, j, finalValue,
   			i = 0;
   
-  		if ( jQuery.isFunction( value ) ) {
+  		if ( isFunction( value ) ) {
   			return this.each( function( j ) {
   				jQuery( this ).addClass( value.call( this, j, getClass( this ) ) );
   			} );
   		}
   
-  		if ( typeof value === "string" && value ) {
-  			classes = value.match( rnothtmlwhite ) || [];
+  		classes = classesToArray( value );
   
+  		if ( classes.length ) {
   			while ( ( elem = this[ i++ ] ) ) {
   				curValue = getClass( elem );
   				cur = elem.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
@@ -8287,7 +8135,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		var classes, elem, cur, curValue, clazz, j, finalValue,
   			i = 0;
   
-  		if ( jQuery.isFunction( value ) ) {
+  		if ( isFunction( value ) ) {
   			return this.each( function( j ) {
   				jQuery( this ).removeClass( value.call( this, j, getClass( this ) ) );
   			} );
@@ -8297,9 +8145,9 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   			return this.attr( "class", "" );
   		}
   
-  		if ( typeof value === "string" && value ) {
-  			classes = value.match( rnothtmlwhite ) || [];
+  		classes = classesToArray( value );
   
+  		if ( classes.length ) {
   			while ( ( elem = this[ i++ ] ) ) {
   				curValue = getClass( elem );
   
@@ -8329,13 +8177,14 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	},
   
   	toggleClass: function( value, stateVal ) {
-  		var type = typeof value;
+  		var type = typeof value,
+  			isValidValue = type === "string" || Array.isArray( value );
   
-  		if ( typeof stateVal === "boolean" && type === "string" ) {
+  		if ( typeof stateVal === "boolean" && isValidValue ) {
   			return stateVal ? this.addClass( value ) : this.removeClass( value );
   		}
   
-  		if ( jQuery.isFunction( value ) ) {
+  		if ( isFunction( value ) ) {
   			return this.each( function( i ) {
   				jQuery( this ).toggleClass(
   					value.call( this, i, getClass( this ), stateVal ),
@@ -8347,12 +8196,12 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		return this.each( function() {
   			var className, i, self, classNames;
   
-  			if ( type === "string" ) {
+  			if ( isValidValue ) {
   
   				// Toggle individual class names
   				i = 0;
   				self = jQuery( this );
-  				classNames = value.match( rnothtmlwhite ) || [];
+  				classNames = classesToArray( value );
   
   				while ( ( className = classNames[ i++ ] ) ) {
   
@@ -8411,7 +8260,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   jQuery.fn.extend( {
   	val: function( value ) {
-  		var hooks, ret, isFunction,
+  		var hooks, ret, valueIsFunction,
   			elem = this[ 0 ];
   
   		if ( !arguments.length ) {
@@ -8440,7 +8289,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   			return;
   		}
   
-  		isFunction = jQuery.isFunction( value );
+  		valueIsFunction = isFunction( value );
   
   		return this.each( function( i ) {
   			var val;
@@ -8449,7 +8298,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   				return;
   			}
   
-  			if ( isFunction ) {
+  			if ( valueIsFunction ) {
   				val = value.call( this, i, jQuery( this ).val() );
   			} else {
   				val = value;
@@ -8591,18 +8440,24 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   // Return jQuery for attributes-only inclusion
   
   
-  var rfocusMorph = /^(?:focusinfocus|focusoutblur)$/;
+  support.focusin = "onfocusin" in window;
+  
+  
+  var rfocusMorph = /^(?:focusinfocus|focusoutblur)$/,
+  	stopPropagationCallback = function( e ) {
+  		e.stopPropagation();
+  	};
   
   jQuery.extend( jQuery.event, {
   
   	trigger: function( event, data, elem, onlyHandlers ) {
   
-  		var i, cur, tmp, bubbleType, ontype, handle, special,
+  		var i, cur, tmp, bubbleType, ontype, handle, special, lastElement,
   			eventPath = [ elem || document ],
   			type = hasOwn.call( event, "type" ) ? event.type : event,
   			namespaces = hasOwn.call( event, "namespace" ) ? event.namespace.split( "." ) : [];
   
-  		cur = tmp = elem = elem || document;
+  		cur = lastElement = tmp = elem = elem || document;
   
   		// Don't do events on text and comment nodes
   		if ( elem.nodeType === 3 || elem.nodeType === 8 ) {
@@ -8654,7 +8509,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   		// Determine event propagation path in advance, per W3C events spec (#9951)
   		// Bubble up to document, then to window; watch for a global ownerDocument var (#9724)
-  		if ( !onlyHandlers && !special.noBubble && !jQuery.isWindow( elem ) ) {
+  		if ( !onlyHandlers && !special.noBubble && !isWindow( elem ) ) {
   
   			bubbleType = special.delegateType || type;
   			if ( !rfocusMorph.test( bubbleType + type ) ) {
@@ -8674,7 +8529,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		// Fire handlers on the event path
   		i = 0;
   		while ( ( cur = eventPath[ i++ ] ) && !event.isPropagationStopped() ) {
-  
+  			lastElement = cur;
   			event.type = i > 1 ?
   				bubbleType :
   				special.bindType || type;
@@ -8706,7 +8561,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   				// Call a native DOM method on the target with the same name as the event.
   				// Don't do default actions on window, that's where global variables be (#6170)
-  				if ( ontype && jQuery.isFunction( elem[ type ] ) && !jQuery.isWindow( elem ) ) {
+  				if ( ontype && isFunction( elem[ type ] ) && !isWindow( elem ) ) {
   
   					// Don't re-trigger an onFOO event when we call its FOO() method
   					tmp = elem[ ontype ];
@@ -8717,7 +8572,17 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   					// Prevent re-triggering of the same event, since we already bubbled it above
   					jQuery.event.triggered = type;
+  
+  					if ( event.isPropagationStopped() ) {
+  						lastElement.addEventListener( type, stopPropagationCallback );
+  					}
+  
   					elem[ type ]();
+  
+  					if ( event.isPropagationStopped() ) {
+  						lastElement.removeEventListener( type, stopPropagationCallback );
+  					}
+  
   					jQuery.event.triggered = undefined;
   
   					if ( tmp ) {
@@ -8763,31 +8628,6 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   } );
   
   
-  jQuery.each( ( "blur focus focusin focusout resize scroll click dblclick " +
-  	"mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
-  	"change select submit keydown keypress keyup contextmenu" ).split( " " ),
-  	function( i, name ) {
-  
-  	// Handle event binding
-  	jQuery.fn[ name ] = function( data, fn ) {
-  		return arguments.length > 0 ?
-  			this.on( name, null, data, fn ) :
-  			this.trigger( name );
-  	};
-  } );
-  
-  jQuery.fn.extend( {
-  	hover: function( fnOver, fnOut ) {
-  		return this.mouseenter( fnOver ).mouseleave( fnOut || fnOver );
-  	}
-  } );
-  
-  
-  
-  
-  support.focusin = "onfocusin" in window;
-  
-  
   // Support: Firefox <=44
   // Firefox doesn't have focus(in | out) events
   // Related ticket - https://bugzilla.mozilla.org/show_bug.cgi?id=687787
@@ -8831,7 +8671,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   }
   var location = window.location;
   
-  var nonce = jQuery.now();
+  var nonce = Date.now();
   
   var rquery = ( /\?/ );
   
@@ -8889,7 +8729,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   			}
   		} );
   
-  	} else if ( !traditional && jQuery.type( obj ) === "object" ) {
+  	} else if ( !traditional && toType( obj ) === "object" ) {
   
   		// Serialize object item.
   		for ( name in obj ) {
@@ -8911,7 +8751,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		add = function( key, valueOrFunction ) {
   
   			// If value is a function, invoke it and use its return value
-  			var value = jQuery.isFunction( valueOrFunction ) ?
+  			var value = isFunction( valueOrFunction ) ?
   				valueOrFunction() :
   				valueOrFunction;
   
@@ -9029,7 +8869,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   			i = 0,
   			dataTypes = dataTypeExpression.toLowerCase().match( rnothtmlwhite ) || [];
   
-  		if ( jQuery.isFunction( func ) ) {
+  		if ( isFunction( func ) ) {
   
   			// For each dataType in the dataTypeExpression
   			while ( ( dataType = dataTypes[ i++ ] ) ) {
@@ -9501,7 +9341,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		if ( s.crossDomain == null ) {
   			urlAnchor = document.createElement( "a" );
   
-  			// Support: IE <=8 - 11, Edge 12 - 13
+  			// Support: IE <=8 - 11, Edge 12 - 15
   			// IE throws exception on accessing the href property if url is malformed,
   			// e.g. http://example.com:80x/
   			try {
@@ -9559,8 +9399,8 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   			// Remember the hash so we can put it back
   			uncached = s.url.slice( cacheURL.length );
   
-  			// If data is available, append data to url
-  			if ( s.data ) {
+  			// If data is available and should be processed, append data to url
+  			if ( s.data && ( s.processData || typeof s.data === "string" ) ) {
   				cacheURL += ( rquery.test( cacheURL ) ? "&" : "?" ) + s.data;
   
   				// #9682: remove data so that it's not used in an eventual retry
@@ -9797,7 +9637,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	jQuery[ method ] = function( url, data, callback, type ) {
   
   		// Shift arguments if data argument was omitted
-  		if ( jQuery.isFunction( data ) ) {
+  		if ( isFunction( data ) ) {
   			type = type || callback;
   			callback = data;
   			data = undefined;
@@ -9835,7 +9675,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   		var wrap;
   
   		if ( this[ 0 ] ) {
-  			if ( jQuery.isFunction( html ) ) {
+  			if ( isFunction( html ) ) {
   				html = html.call( this[ 0 ] );
   			}
   
@@ -9861,7 +9701,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	},
   
   	wrapInner: function( html ) {
-  		if ( jQuery.isFunction( html ) ) {
+  		if ( isFunction( html ) ) {
   			return this.each( function( i ) {
   				jQuery( this ).wrapInner( html.call( this, i ) );
   			} );
@@ -9881,10 +9721,10 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	},
   
   	wrap: function( html ) {
-  		var isFunction = jQuery.isFunction( html );
+  		var htmlIsFunction = isFunction( html );
   
   		return this.each( function( i ) {
-  			jQuery( this ).wrapAll( isFunction ? html.call( this, i ) : html );
+  			jQuery( this ).wrapAll( htmlIsFunction ? html.call( this, i ) : html );
   		} );
   	},
   
@@ -9976,7 +9816,8 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   					return function() {
   						if ( callback ) {
   							callback = errorCallback = xhr.onload =
-  								xhr.onerror = xhr.onabort = xhr.onreadystatechange = null;
+  								xhr.onerror = xhr.onabort = xhr.ontimeout =
+  									xhr.onreadystatechange = null;
   
   							if ( type === "abort" ) {
   								xhr.abort();
@@ -10016,7 +9857,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   				// Listen to events
   				xhr.onload = callback();
-  				errorCallback = xhr.onerror = callback( "error" );
+  				errorCallback = xhr.onerror = xhr.ontimeout = callback( "error" );
   
   				// Support: IE 9 only
   				// Use onreadystatechange to replace onabort
@@ -10170,7 +10011,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	if ( jsonProp || s.dataTypes[ 0 ] === "jsonp" ) {
   
   		// Get callback name, remembering preexisting value associated with it
-  		callbackName = s.jsonpCallback = jQuery.isFunction( s.jsonpCallback ) ?
+  		callbackName = s.jsonpCallback = isFunction( s.jsonpCallback ) ?
   			s.jsonpCallback() :
   			s.jsonpCallback;
   
@@ -10221,7 +10062,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   			}
   
   			// Call if it was a function and we have a response
-  			if ( responseContainer && jQuery.isFunction( overwritten ) ) {
+  			if ( responseContainer && isFunction( overwritten ) ) {
   				overwritten( responseContainer[ 0 ] );
   			}
   
@@ -10313,7 +10154,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	}
   
   	// If it's a function
-  	if ( jQuery.isFunction( params ) ) {
+  	if ( isFunction( params ) ) {
   
   		// We assume that it's the callback
   		callback = params;
@@ -10421,7 +10262,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   			curLeft = parseFloat( curCSSLeft ) || 0;
   		}
   
-  		if ( jQuery.isFunction( options ) ) {
+  		if ( isFunction( options ) ) {
   
   			// Use jQuery.extend here to allow modification of coordinates argument (gh-1848)
   			options = options.call( elem, i, jQuery.extend( {}, curOffset ) );
@@ -10444,6 +10285,8 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   };
   
   jQuery.fn.extend( {
+  
+  	// offset() relates an element's border box to the document origin
   	offset: function( options ) {
   
   		// Preserve chaining for setter
@@ -10455,7 +10298,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   				} );
   		}
   
-  		var doc, docElem, rect, win,
+  		var rect, win,
   			elem = this[ 0 ];
   
   		if ( !elem ) {
@@ -10470,50 +10313,52 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   			return { top: 0, left: 0 };
   		}
   
+  		// Get document-relative position by adding viewport scroll to viewport-relative gBCR
   		rect = elem.getBoundingClientRect();
-  
-  		doc = elem.ownerDocument;
-  		docElem = doc.documentElement;
-  		win = doc.defaultView;
-  
+  		win = elem.ownerDocument.defaultView;
   		return {
-  			top: rect.top + win.pageYOffset - docElem.clientTop,
-  			left: rect.left + win.pageXOffset - docElem.clientLeft
+  			top: rect.top + win.pageYOffset,
+  			left: rect.left + win.pageXOffset
   		};
   	},
   
+  	// position() relates an element's margin box to its offset parent's padding box
+  	// This corresponds to the behavior of CSS absolute positioning
   	position: function() {
   		if ( !this[ 0 ] ) {
   			return;
   		}
   
-  		var offsetParent, offset,
+  		var offsetParent, offset, doc,
   			elem = this[ 0 ],
   			parentOffset = { top: 0, left: 0 };
   
-  		// Fixed elements are offset from window (parentOffset = {top:0, left: 0},
-  		// because it is its only offset parent
+  		// position:fixed elements are offset from the viewport, which itself always has zero offset
   		if ( jQuery.css( elem, "position" ) === "fixed" ) {
   
-  			// Assume getBoundingClientRect is there when computed position is fixed
+  			// Assume position:fixed implies availability of getBoundingClientRect
   			offset = elem.getBoundingClientRect();
   
   		} else {
-  
-  			// Get *real* offsetParent
-  			offsetParent = this.offsetParent();
-  
-  			// Get correct offsets
   			offset = this.offset();
-  			if ( !nodeName( offsetParent[ 0 ], "html" ) ) {
-  				parentOffset = offsetParent.offset();
-  			}
   
-  			// Add offsetParent borders
-  			parentOffset = {
-  				top: parentOffset.top + jQuery.css( offsetParent[ 0 ], "borderTopWidth", true ),
-  				left: parentOffset.left + jQuery.css( offsetParent[ 0 ], "borderLeftWidth", true )
-  			};
+  			// Account for the *real* offset parent, which can be the document or its root element
+  			// when a statically positioned element is identified
+  			doc = elem.ownerDocument;
+  			offsetParent = elem.offsetParent || doc.documentElement;
+  			while ( offsetParent &&
+  				( offsetParent === doc.body || offsetParent === doc.documentElement ) &&
+  				jQuery.css( offsetParent, "position" ) === "static" ) {
+  
+  				offsetParent = offsetParent.parentNode;
+  			}
+  			if ( offsetParent && offsetParent !== elem && offsetParent.nodeType === 1 ) {
+  
+  				// Incorporate borders into its offset, since they are outside its content origin
+  				parentOffset = jQuery( offsetParent ).offset();
+  				parentOffset.top += jQuery.css( offsetParent, "borderTopWidth", true );
+  				parentOffset.left += jQuery.css( offsetParent, "borderLeftWidth", true );
+  			}
   		}
   
   		// Subtract parent offsets and element margins
@@ -10555,7 +10400,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   
   			// Coalesce documents and windows
   			var win;
-  			if ( jQuery.isWindow( elem ) ) {
+  			if ( isWindow( elem ) ) {
   				win = elem;
   			} else if ( elem.nodeType === 9 ) {
   				win = elem.defaultView;
@@ -10613,7 +10458,7 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   			return access( this, function( elem, type, value ) {
   				var doc;
   
-  				if ( jQuery.isWindow( elem ) ) {
+  				if ( isWindow( elem ) ) {
   
   					// $( window ).outerWidth/Height return w/h including scrollbars (gh-1729)
   					return funcName.indexOf( "outer" ) === 0 ?
@@ -10647,6 +10492,28 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   } );
   
   
+  jQuery.each( ( "blur focus focusin focusout resize scroll click dblclick " +
+  	"mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
+  	"change select submit keydown keypress keyup contextmenu" ).split( " " ),
+  	function( i, name ) {
+  
+  	// Handle event binding
+  	jQuery.fn[ name ] = function( data, fn ) {
+  		return arguments.length > 0 ?
+  			this.on( name, null, data, fn ) :
+  			this.trigger( name );
+  	};
+  } );
+  
+  jQuery.fn.extend( {
+  	hover: function( fnOver, fnOut ) {
+  		return this.mouseenter( fnOver ).mouseleave( fnOut || fnOver );
+  	}
+  } );
+  
+  
+  
+  
   jQuery.fn.extend( {
   
   	bind: function( types, data, fn ) {
@@ -10668,6 +10535,37 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   	}
   } );
   
+  // Bind a function to a context, optionally partially applying any
+  // arguments.
+  // jQuery.proxy is deprecated to promote standards (specifically Function#bind)
+  // However, it is not slated for removal any time soon
+  jQuery.proxy = function( fn, context ) {
+  	var tmp, args, proxy;
+  
+  	if ( typeof context === "string" ) {
+  		tmp = fn[ context ];
+  		context = fn;
+  		fn = tmp;
+  	}
+  
+  	// Quick check to determine if target is callable, in the spec
+  	// this throws a TypeError, but we will just return undefined.
+  	if ( !isFunction( fn ) ) {
+  		return undefined;
+  	}
+  
+  	// Simulated bind
+  	args = slice.call( arguments, 2 );
+  	proxy = function() {
+  		return fn.apply( context || this, args.concat( slice.call( arguments ) ) );
+  	};
+  
+  	// Set the guid of unique handler to the same of original handler, so it can be removed
+  	proxy.guid = fn.guid = fn.guid || jQuery.guid++;
+  
+  	return proxy;
+  };
+  
   jQuery.holdReady = function( hold ) {
   	if ( hold ) {
   		jQuery.readyWait++;
@@ -10678,6 +10576,26 @@ define('node_modules/jquery/dist/jquery', function(require, exports, module) {
   jQuery.isArray = Array.isArray;
   jQuery.parseJSON = JSON.parse;
   jQuery.nodeName = nodeName;
+  jQuery.isFunction = isFunction;
+  jQuery.isWindow = isWindow;
+  jQuery.camelCase = camelCase;
+  jQuery.type = toType;
+  
+  jQuery.now = Date.now;
+  
+  jQuery.isNumeric = function( obj ) {
+  
+  	// As of jQuery 3.0, isNumeric is limited to
+  	// strings and numbers (primitives or objects)
+  	// that can be coerced to finite numbers (gh-2662)
+  	var type = jQuery.type( obj );
+  	return ( type === "number" || type === "string" ) &&
+  
+  		// parseFloat NaNs numeric-cast false positives ("")
+  		// ...but misinterprets leading-number strings, particularly hex literals ("0x...")
+  		// subtraction forces infinities to NaN
+  		!isNaN( obj - parseFloat( obj ) );
+  };
   
   
   

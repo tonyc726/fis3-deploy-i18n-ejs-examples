@@ -1,4 +1,4 @@
-define('node_modules/moment/locale/en-gb', function(require, exports, module) {
+define('node_modules/moment/locale/en-il', function(require, exports, module) {
 
   //! moment.js locale configuration
   
@@ -10,7 +10,7 @@ define('node_modules/moment/locale/en-gb', function(require, exports, module) {
   }(this, (function (moment) { 'use strict';
   
   
-      var enGb = moment.defineLocale('en-gb', {
+      var enIl = moment.defineLocale('en-il', {
           months : 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_'),
           monthsShort : 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_'),
           weekdays : 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_'),
@@ -36,7 +36,6 @@ define('node_modules/moment/locale/en-gb', function(require, exports, module) {
               future : 'in %s',
               past : '%s ago',
               s : 'a few seconds',
-              ss : '%d seconds',
               m : 'a minute',
               mm : '%d minutes',
               h : 'an hour',
@@ -56,14 +55,10 @@ define('node_modules/moment/locale/en-gb', function(require, exports, module) {
                   (b === 2) ? 'nd' :
                   (b === 3) ? 'rd' : 'th';
               return number + output;
-          },
-          week : {
-              dow : 1, // Monday is the first day of the week.
-              doy : 4  // The week that contains Jan 4th is the first week of the year.
           }
       });
   
-      return enGb;
+      return enIl;
   
   })));
   

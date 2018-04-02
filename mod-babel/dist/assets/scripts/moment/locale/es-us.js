@@ -1,4 +1,4 @@
-define('node_modules/moment/locale/es-do', function(require, exports, module) {
+define('node_modules/moment/locale/es-us', function(require, exports, module) {
 
   //! moment.js locale configuration
   
@@ -13,10 +13,7 @@ define('node_modules/moment/locale/es-do', function(require, exports, module) {
       var monthsShortDot = 'ene._feb._mar._abr._may._jun._jul._ago._sep._oct._nov._dic.'.split('_'),
           monthsShort = 'ene_feb_mar_abr_may_jun_jul_ago_sep_oct_nov_dic'.split('_');
   
-      var monthsParse = [/^ene/i, /^feb/i, /^mar/i, /^abr/i, /^may/i, /^jun/i, /^jul/i, /^ago/i, /^sep/i, /^oct/i, /^nov/i, /^dic/i];
-      var monthsRegex = /^(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre|ene\.?|feb\.?|mar\.?|abr\.?|may\.?|jun\.?|jul\.?|ago\.?|sep\.?|oct\.?|nov\.?|dic\.?)/i;
-  
-      var esDo = moment.defineLocale('es-do', {
+      var esUs = moment.defineLocale('es-us', {
           months : 'enero_febrero_marzo_abril_mayo_junio_julio_agosto_septiembre_octubre_noviembre_diciembre'.split('_'),
           monthsShort : function (m, format) {
               if (!m) {
@@ -27,13 +24,7 @@ define('node_modules/moment/locale/es-do', function(require, exports, module) {
                   return monthsShortDot[m.month()];
               }
           },
-          monthsRegex: monthsRegex,
-          monthsShortRegex: monthsRegex,
-          monthsStrictRegex: /^(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/i,
-          monthsShortStrictRegex: /^(ene\.?|feb\.?|mar\.?|abr\.?|may\.?|jun\.?|jul\.?|ago\.?|sep\.?|oct\.?|nov\.?|dic\.?)/i,
-          monthsParse: monthsParse,
-          longMonthsParse: monthsParse,
-          shortMonthsParse: monthsParse,
+          monthsParseExact : true,
           weekdays : 'domingo_lunes_martes_miércoles_jueves_viernes_sábado'.split('_'),
           weekdaysShort : 'dom._lun._mar._mié._jue._vie._sáb.'.split('_'),
           weekdaysMin : 'do_lu_ma_mi_ju_vi_sá'.split('_'),
@@ -41,10 +32,10 @@ define('node_modules/moment/locale/es-do', function(require, exports, module) {
           longDateFormat : {
               LT : 'h:mm A',
               LTS : 'h:mm:ss A',
-              L : 'DD/MM/YYYY',
-              LL : 'D [de] MMMM [de] YYYY',
-              LLL : 'D [de] MMMM [de] YYYY h:mm A',
-              LLLL : 'dddd, D [de] MMMM [de] YYYY h:mm A'
+              L : 'MM/DD/YYYY',
+              LL : 'MMMM [de] D [de] YYYY',
+              LLL : 'MMMM [de] D [de] YYYY h:mm A',
+              LLLL : 'dddd, MMMM [de] D [de] YYYY h:mm A'
           },
           calendar : {
               sameDay : function () {
@@ -83,12 +74,12 @@ define('node_modules/moment/locale/es-do', function(require, exports, module) {
           dayOfMonthOrdinalParse : /\d{1,2}º/,
           ordinal : '%dº',
           week : {
-              dow : 1, // Monday is the first day of the week.
-              doy : 4  // The week that contains Jan 4th is the first week of the year.
+              dow : 0, // Sunday is the first day of the week.
+              doy : 6  // The week that contains Jan 1st is the first week of the year.
           }
       });
   
-      return esDo;
+      return esUs;
   
   })));
   
