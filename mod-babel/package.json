@@ -16,7 +16,7 @@
     "fis-mod.js": "^1.0.0",
     "jquery": "^3.2.1",
     "jquery-validation": "^1.17.0",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.13",
     "moment": "^2.18.1"
   },
   "devDependencies": {
