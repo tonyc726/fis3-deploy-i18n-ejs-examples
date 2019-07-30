@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>async</title>
+    <script src="../node_modules/fis-mod.js/mod.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>async</title>
-  <script src="../node_modules/fis-mod.js/mod.js"></script>
-</head>
-
-<body>
-  <h1>ASYNC<sub>异步模式</sub></h1>
-  <form action="#" id="validate_test">
-    <input type="text" value="" name="username" />
-    <input type="submit" value="submit" />
-  </form>
-  <script>
-    /**
-     * async模式
-     * 所有require的模块将以异步的形式也就是动态生成script标签
-     * FIS编译阶段会将需要用到的依赖分析结果注入到页面代码或者单独文件中
-     * 以便于在运行时省掉依赖分析这个步骤
-     */
-    require(['jquery', './main.js'], ($, main) => {
-      $(() => {
-        main.default((mainLocalText) => {
-          console.log(`main.js > export default > callback > ${mainLocalText}`);
+  <body>
+    <h1>ASYNC<sub>异步模式</sub></h1>
+    <form action="#" id="validate_test">
+      <input type="text" value="" name="username" />
+      <input type="submit" value="submit" />
+    </form>
+    <script>
+      /**
+       * async模式
+       * 所有require的模块将以异步的形式也就是动态生成script标签
+       * FIS编译阶段会将需要用到的依赖分析结果注入到页面代码或者单独文件中
+       * 以便于在运行时省掉依赖分析这个步骤
+       */
+      require(['jquery', './main.js'], ($, main) => {
+        $(() => {
+          main.default(mainLocalText => {
+            console.log(
+              `main.js > export default > callback > ${mainLocalText}`
+            );
+          });
         });
       });
-    });
-  </script>
-</body>
-
+    </script>
+  </body>
 </html>

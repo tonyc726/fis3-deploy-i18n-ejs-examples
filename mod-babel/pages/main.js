@@ -30,7 +30,7 @@ $('body').append(`<p>moment now: ${moment().format()}</p>`);
 
 const mainLocalVar = 'main local text';
 
-export default (callback) => {
+export default callback => {
   console.info('main.js > export default');
   if ($.isFunction(callback)) {
     callback(mainLocalVar);

@@ -9,7 +9,7 @@ fis.set('project.ignore', [
   'package.json',
   'yarn.lock',
   // project ignore files
-  'dist/**'
+  'dist/**',
 ]);
 
 // 压缩html的默认设置
@@ -31,18 +31,18 @@ const HTML_MINIFIER_OPTIONS = {
 
 // ------ 配置i18n
 fis.match('/translations/**', {
-  release: false
+  release: false,
 });
 
 fis.match('/pages/(**)/(*.html)', {
-  release: '/$1/$2'
+  release: '/$1/$2',
 });
 fis.match('/pages/(*.html)', {
-  release: '/$1'
+  release: '/$1',
 });
 
 fis.match('/assets/**', {
-  release: '/$&'
+  release: '/$&',
 });
 
 // deploy config
@@ -50,7 +50,7 @@ fis.match('*', {
   deploy: [
     fis.plugin('html-minifier', HTML_MINIFIER_OPTIONS),
     fis.plugin('local-deliver', {
-      to: Path.resolve(__dirname, './dist')
-    })
-  ]
+      to: Path.resolve(__dirname, './dist'),
+    }),
+  ],
 });

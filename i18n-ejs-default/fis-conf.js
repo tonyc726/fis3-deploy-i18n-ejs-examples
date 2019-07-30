@@ -9,7 +9,7 @@ fis.set('project.ignore', [
   'package.json',
   'yarn.lock',
   // project ignore files
-  'dist/**'
+  'dist/**',
 ]);
 
 // i18n静态模板编译的默认设置
@@ -37,19 +37,19 @@ const I18N_EJS_OPTIONS = {
 
 // ------ 配置i18n
 fis.match('/translations/**', {
-  release: false
+  release: false,
 });
 
 fis.match('/pages/(**)/(*.html)', {
-  release: '/$1/$2'
+  release: '/$1/$2',
 });
 
 fis.match('/assets/**', {
-  release: '/$&'
+  release: '/$&',
 });
 
 fis.match('/assets/**', {
-  release: '/$&'
+  release: '/$&',
 });
 
 // deploy config
@@ -57,7 +57,7 @@ fis.match('*', {
   deploy: [
     fis.plugin('i18n-ejs', I18N_EJS_OPTIONS),
     fis.plugin('local-deliver', {
-      to: Path.resolve(__dirname, './dist')
-    })
-  ]
+      to: Path.resolve(__dirname, './dist'),
+    }),
+  ],
 });

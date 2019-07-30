@@ -62,15 +62,15 @@ fis.hook('commonjs', {
     {
       name: 'jquery',
       location: './node_modules/jquery/dist/',
-      main: 'jquery.js'
+      main: 'jquery.js',
     },
     {
       name: 'process',
       location: './node_modules/process/',
-      main: 'index.js'
-    }
-  ]
-})
+      main: 'index.js',
+    },
+  ],
+});
 
 // 为node_modules文件添加针对mod.js的转换
 fis
@@ -81,36 +81,40 @@ fis
     isMod: true,
     useSameNameRequire: true,
   })
-  .match('/node_modules/({' +
-    'fis-mod.js/mod.js,' +
-    'jquery/dist/jquery.js,' +
-    'jquery-validation/dist/**,' +
-    'lodash/**,' +
-    // 'process/browser.js,' +
-    // 'process/index.js,' +
-    'moment/locale/**,' +
-    'moment/moment.js' +
-  '})', {
-    release: '/assets/scripts/$1'
-  })
+  .match(
+    '/node_modules/({' +
+      'fis-mod.js/mod.js,' +
+      'jquery/dist/jquery.js,' +
+      'jquery-validation/dist/**,' +
+      'lodash/**,' +
+      // 'process/browser.js,' +
+      // 'process/index.js,' +
+      'moment/locale/**,' +
+      'moment/moment.js' +
+      '})',
+    {
+      release: '/assets/scripts/$1',
+    }
+  )
   .match('/node_modules/jquery-validation/dist/**', {
-    requires: [
-      'jquery'
-    ]
+    requires: ['jquery'],
   })
   .match('/node_modules/fis-mod.js/mod.js', {
     isMod: false,
     // !!! import
     // 用来控制合并时的顺序，值越小越在前面。配合 packTo 一起使用
-    packOrder: -100
+    packOrder: -100,
   })
-  .match('/node_modules/{' +
-    'fis-mod.js/mod.js,' +
-    // 'process/browser.js,' +
-    'jquery/dist/jquery.js' +
-  '}', {
-    packTo: '/assets/scripts/vendors.js'
-  });
+  .match(
+    '/node_modules/{' +
+      'fis-mod.js/mod.js,' +
+      // 'process/browser.js,' +
+      'jquery/dist/jquery.js' +
+      '}',
+    {
+      packTo: '/assets/scripts/vendors.js',
+    }
+  );
 
 // 因为是纯前端项目，依赖不能自断被加载进来，所以这里需要借助一个 loader 来完成，
 // 注意：与后端结合的项目不需要此插件!!!
@@ -120,12 +124,12 @@ fis.match('::package', {
   postpackager: fis.plugin('loader', {
     resourceType: 'commonjs',
     processor: {
-      '.html': 'html'
+      '.html': 'html',
     },
     sourceMap: true, //是否生成依赖map文件
     useInlineMap: true, // 资源映射表内嵌
-    resourcemapWhitespace: 2 // resourcemap缩进宽度, 默认为2.
-  })
+    resourcemapWhitespace: 2, // resourcemap缩进宽度, 默认为2.
+  }),
 });
 
 // ------ *.html:js & *.html:css
@@ -141,10 +145,10 @@ fis.match('/pages/(**.{js,es})', {
   preprocessor: [
     fis.plugin('js-require-css'),
     fis.plugin('js-require-file', {
-      useEmbedWhenSizeLessThan: 10 * 1024 // 小于10k用base64
-    })
-  ]
-})
+      useEmbedWhenSizeLessThan: 10 * 1024, // 小于10k用base64
+    }),
+  ],
+});
 
 // deploy config
 fis.match('*', {
@@ -156,5 +160,3 @@ fis.match('*', {
     }),
   ],
 });
-
-

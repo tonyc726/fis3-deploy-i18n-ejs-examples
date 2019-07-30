@@ -1,11 +1,13 @@
 {
-  "presets": [
-    "env",
-    "stage-0"
-  ],
+  "presets": ["@babel/preset-env"],
   "plugins": [
-    "lodash",
-    "transform-runtime"
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "corejs": 3
+      }
+    ],
+    "add-module-exports"
   ],
   "comments": false
 }
